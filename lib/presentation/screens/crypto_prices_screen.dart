@@ -11,7 +11,6 @@ class CryptoPricesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Trigger the event to subscribe to crypto prices
     context.read<CryptoBloc>().add(SubscribeToCryptoPrices(['ETH-USD', 'BTC-USD']));
 
     return Scaffold(

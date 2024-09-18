@@ -4,6 +4,7 @@ import '../datasources/crypto_websocket_data_source.dart';
 
 class CryptoRepositoryImpl implements CryptoRepository {
   final CryptoWebSocketDataSource dataSource;
+  final Map<String, CryptoPrice> _latestPrices = {};
 
   CryptoRepositoryImpl(this.dataSource);
 
@@ -12,24 +13,21 @@ class CryptoRepositoryImpl implements CryptoRepository {
     dataSource.subscribeToCryptoPrices(symbols);
     return dataSource.cryptoPricesStream.map((event) {
       try {
-        if (event['s'] != null && event['p'] != null && event['t'] != null) {
-          final symbol = event['s'];
-          return symbols
-              .where((s) => s == symbol)
-              .map((s) => CryptoPrice(
-                    symbol: s,
-                    lastPrice: _convertToDouble(event['p']) ?? 0.0,
-                    quantity: _convertToDouble(event['q']),
-                    dailyChangePercentage: _convertToDouble(event['dc']),
-                    dailyDifferencePrice: _convertToDouble(event['dd']),
-                    timestamp: DateTime.fromMillisecondsSinceEpoch(event['t']),
-                  ))
-              .toList();
+        final symbol = event['s'];
+        if (symbol != null && event['p'] != null && event['t'] != null) {
+          _latestPrices[symbol] = CryptoPrice(
+            symbol: symbol,
+            lastPrice: _convertToDouble(event['p']) ?? 0.0,
+            quantity: _convertToDouble(event['q']),
+            dailyChangePercentage: _convertToDouble(event['dc']),
+            dailyDifferencePrice: _convertToDouble(event['dd']),
+            timestamp: DateTime.fromMillisecondsSinceEpoch(event['t']),
+          );
         }
       } catch (e) {
         print('Error processing data in repository: $e');
       }
-      return [];
+      return _latestPrices.values.toList();
     });
   }
 

@@ -7,6 +7,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 class CryptoWebSocketDataSource {
   final WebSocketChannel _channel;
   final StreamController<Map<String, dynamic>> _cryptoPriceController = StreamController.broadcast();
+  int? lastTimestampInSeconds;
 
   CryptoWebSocketDataSource()
       : _channel = WebSocketChannel.connect(
@@ -36,9 +37,13 @@ class CryptoWebSocketDataSource {
       try {
         final data = jsonDecode(event);
         if (data is Map<String, dynamic>) {
-          _cryptoPriceController.add(data);
-        } else {
-          print('Unexpected data format: $data');
+          final timestampInMilliseconds = data['t'] as int;
+          final timestampInSeconds = (timestampInMilliseconds / 1000).round();
+
+          if (lastTimestampInSeconds == null || lastTimestampInSeconds != timestampInSeconds) {
+            lastTimestampInSeconds = timestampInSeconds;
+            _cryptoPriceController.add(data);
+          }
         }
       } catch (e) {
         print('Error decoding WebSocket data: $e');

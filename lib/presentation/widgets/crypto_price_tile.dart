@@ -5,7 +5,7 @@ import '../../domain/entities/crypto_price.dart';
 class CryptoPriceTile extends StatelessWidget {
   final CryptoPrice cryptoPrice;
 
-  CryptoPriceTile({super.key, required this.cryptoPrice});
+  const CryptoPriceTile({super.key, required this.cryptoPrice});
 
   @override
   Widget build(BuildContext context) {

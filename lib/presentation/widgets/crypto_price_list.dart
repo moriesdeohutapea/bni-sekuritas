@@ -6,7 +6,7 @@ import 'crypto_price_tile.dart';
 class CryptoPriceList extends StatelessWidget {
   final List<CryptoPrice> cryptoPrices;
 
-  CryptoPriceList({super.key, required this.cryptoPrices});
+  const CryptoPriceList({super.key, required this.cryptoPrices});
 
   @override
   Widget build(BuildContext context) {
