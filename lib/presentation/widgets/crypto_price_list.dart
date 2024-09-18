@@ -10,11 +10,59 @@ class CryptoPriceList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: cryptoPrices.length,
-      itemBuilder: (context, index) {
-        return CryptoPriceTile(cryptoPrice: cryptoPrices[index]);
-      },
+    return Column(
+      children: [
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  'Symbol',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    'Last',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    'Chg',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    'Chg%',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const Divider(),
+        Expanded(
+          child: ListView.builder(
+            itemCount: cryptoPrices.length,
+            itemBuilder: (context, index) {
+              return CryptoPriceTile(cryptoPrice: cryptoPrices[index]);
+            },
+          ),
+        ),
+      ],
     );
   }
 }

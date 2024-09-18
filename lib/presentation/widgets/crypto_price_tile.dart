@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../domain/entities/crypto_price.dart';
 
@@ -9,19 +10,51 @@ class CryptoPriceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(cryptoPrice.symbol, style: const TextStyle(fontWeight: FontWeight.bold)),
-      subtitle: Text('Last Price: \$${cryptoPrice.lastPrice.toStringAsFixed(2)}'),
-      trailing: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+    final NumberFormat numberFormat = NumberFormat("#,##0.00", "en_US");
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            'Chg: ${cryptoPrice.dailyDifferencePrice?.toStringAsFixed(2) ?? 'N/A'}',
-            style: TextStyle(color: _getChangeColor(cryptoPrice.dailyDifferencePrice)),
+          Expanded(
+            child: Text(
+              cryptoPrice.symbol,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
-          Text(
-            'Chg%: ${cryptoPrice.dailyChangePercentage?.toStringAsFixed(2) ?? 'N/A'}%',
-            style: TextStyle(color: _getChangeColor(cryptoPrice.dailyChangePercentage)),
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                '\$${numberFormat.format(cryptoPrice.lastPrice)}',
+                style: const TextStyle(fontSize: 16.0),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                numberFormat.format(cryptoPrice.dailyDifferencePrice ?? 0),
+                style: TextStyle(
+                  fontSize: 16.0,
+                  color: _getChangeColor(cryptoPrice.dailyDifferencePrice),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                '${numberFormat.format(cryptoPrice.dailyChangePercentage ?? 0)}%',
+                style: TextStyle(
+                  fontSize: 16.0,
+                  color: _getChangeColor(cryptoPrice.dailyChangePercentage),
+                ),
+              ),
+            ),
           ),
         ],
       ),
