@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:web_socket_channel/status.dart' as status;
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -11,7 +12,7 @@ class CryptoWebSocketDataSource {
 
   CryptoWebSocketDataSource()
       : _channel = WebSocketChannel.connect(
-          Uri.parse('wss://ws.eodhistoricaldata.com/ws/crypto?api_token=demo'),
+          Uri.parse('${dotenv.env['WEBSOCKET_URL']}?api_token=${dotenv.env['API_TOKEN']}'),
         ) {
     _initializeListeners();
   }
