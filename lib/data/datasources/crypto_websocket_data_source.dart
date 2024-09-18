@@ -8,7 +8,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 class CryptoWebSocketDataSource {
   final WebSocketChannel _channel;
   final StreamController<Map<String, dynamic>> _cryptoPriceController = StreamController.broadcast();
-  int? lastTimestampInSeconds;
+  int? _lastTimestampInSeconds;
 
   CryptoWebSocketDataSource()
       : _channel = WebSocketChannel.connect(
@@ -18,42 +18,57 @@ class CryptoWebSocketDataSource {
   }
 
   void subscribeToCryptoPrices(List<String> symbols) {
-    final subscribeMessage = jsonEncode({
-      "action": "subscribe",
-      "symbols": symbols.join(","),
-    });
-    _channel.sink.add(subscribeMessage);
+    _sendAction("subscribe", symbols);
   }
 
   void unsubscribeFromCryptoPrices(List<String> symbols) {
-    final unsubscribeMessage = jsonEncode({
-      "action": "unsubscribe",
+    _sendAction("unsubscribe", symbols);
+  }
+
+  void _sendAction(String action, List<String> symbols) {
+    final message = jsonEncode({
+      "action": action,
       "symbols": symbols.join(","),
     });
-    _channel.sink.add(unsubscribeMessage);
+    _channel.sink.add(message);
   }
 
   void _initializeListeners() {
-    _channel.stream.listen((event) {
-      try {
-        final data = jsonDecode(event);
-        if (data is Map<String, dynamic>) {
-          final timestampInMilliseconds = data['t'] as int;
-          final timestampInSeconds = (timestampInMilliseconds / 1000).round();
+    _channel.stream.listen(_onDataReceived, onError: _onError, onDone: _onDone);
+  }
 
-          if (lastTimestampInSeconds == null || lastTimestampInSeconds != timestampInSeconds) {
-            lastTimestampInSeconds = timestampInSeconds;
-            _cryptoPriceController.add(data);
-          }
+  void _onDataReceived(dynamic event) {
+    try {
+      final data = jsonDecode(event);
+      if (data is Map<String, dynamic>) {
+        final timestampInSeconds = _extractTimestampInSeconds(data['t']);
+        if (_shouldUpdate(timestampInSeconds)) {
+          _lastTimestampInSeconds = timestampInSeconds;
+          _cryptoPriceController.add(data);
         }
-      } catch (e) {
-        print('Error decoding WebSocket data: $e');
       }
-    }, onError: (error) {
-      print('WebSocket error: $error');
-    }, onDone: () {
-      print('WebSocket connection closed');
-    });
+    } catch (e) {
+      print('Error decoding WebSocket data: $e');
+    }
+  }
+
+  int? _extractTimestampInSeconds(dynamic timestamp) {
+    if (timestamp is int) {
+      return (timestamp / 1000).round();
+    }
+    return null;
+  }
+
+  bool _shouldUpdate(int? timestampInSeconds) {
+    return _lastTimestampInSeconds == null || _lastTimestampInSeconds != timestampInSeconds;
+  }
+
+  void _onError(error) {
+    print('WebSocket error: $error');
+  }
+
+  void _onDone() {
+    print('WebSocket connection closed');
   }
 
   Stream<Map<String, dynamic>> get cryptoPricesStream => _cryptoPriceController.stream;

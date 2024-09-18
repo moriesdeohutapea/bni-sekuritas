@@ -6,32 +6,36 @@ import 'crypto_event.dart';
 import 'crypto_state.dart';
 
 class CryptoBloc extends Bloc<CryptoEvent, CryptoState> {
-  final GetCryptoPrices getCryptoPrices;
+  final GetCryptoPrices _getCryptoPrices;
 
-  CryptoBloc(this.getCryptoPrices) : super(CryptoInitial()) {
-    on<SubscribeToCryptoPrices>((event, emit) async {
-      emit(CryptoLoading());
-      try {
-        final cryptoStream = getCryptoPrices.call(event.symbols);
-        await emit.forEach<List<CryptoPrice>>(
-          cryptoStream,
-          onData: (data) => CryptoLoaded(data),
-          onError: (error, stackTrace) {
-            print('Error occurred: $error');
-            print('Stack trace: $stackTrace');
-            return CryptoError('Failed to fetch data');
-          },
-        );
-      } catch (error, stackTrace) {
-        print('Exception caught in CryptoBloc: $error');
-        print('Stack trace: $stackTrace');
-        emit(CryptoError('Failed to fetch data'));
-      }
-    });
+  CryptoBloc(this._getCryptoPrices) : super(CryptoInitial()) {
+    on<SubscribeToCryptoPrices>(_onSubscribeToCryptoPrices);
 
-    on<UnsubscribeFromCryptoPrices>((event, emit) async {
-      getCryptoPrices.dispose();
-      emit(CryptoInitial());
-    });
+    on<UnsubscribeFromCryptoPrices>(_onUnsubscribeFromCryptoPrices);
+  }
+
+  Future<void> _onSubscribeToCryptoPrices(SubscribeToCryptoPrices event, Emitter<CryptoState> emit) async {
+    emit(CryptoLoading());
+    try {
+      final cryptoStream = _getCryptoPrices.call(event.symbols);
+      await emit.forEach<List<CryptoPrice>>(
+        cryptoStream,
+        onData: (data) => CryptoLoaded(data),
+        onError: (error, _) => _handleError(error),
+      );
+    } catch (error) {
+      emit(_handleError(error));
+    }
+  }
+
+  Future<void> _onUnsubscribeFromCryptoPrices(UnsubscribeFromCryptoPrices event, Emitter<CryptoState> emit) async {
+    _getCryptoPrices.dispose();
+    emit(CryptoInitial());
+  }
+
+  CryptoState _handleError(Object error) {
+    // You could enhance error logging here if needed
+    print('Error occurred: $error');
+    return CryptoError('Failed to fetch data');
   }
 }

@@ -1,10 +1,10 @@
 class CryptoPrice {
-  final String symbol; // Ticker code (e.g., "ETH-USD", "BTC-USD")
-  final double lastPrice; // Last traded price of the cryptocurrency
-  final double? quantity; // Quantity of the trade (optional)
-  final double? dailyChangePercentage; // Daily change percentage (optional)
-  final double? dailyDifferencePrice; // Daily difference in price (optional)
-  final DateTime timestamp; // Timestamp of the trade
+  final String symbol;
+  final double lastPrice;
+  final double? quantity;
+  final double? dailyChangePercentage;
+  final double? dailyDifferencePrice;
+  final DateTime timestamp;
 
   CryptoPrice({
     required this.symbol,

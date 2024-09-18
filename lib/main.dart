@@ -4,23 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-import 'data/datasources/crypto_websocket_data_source.dart';
-import 'data/repositories/crypto_repository_impl.dart';
-import 'domain/usecases/get_crypto_prices.dart';
+import 'locator.dart';
 
 void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: 'bni_environment.env');
-  final dataSource = CryptoWebSocketDataSource();
-  final repository = CryptoRepositoryImpl(dataSource);
-  final getCryptoPrices = GetCryptoPrices(repository);
-
-  runApp(MyApp(getCryptoPrices: getCryptoPrices));
+  setupLocator();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final GetCryptoPrices getCryptoPrices;
-
-  const MyApp({super.key, required this.getCryptoPrices});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +26,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: BlocProvider(
-        create: (_) => CryptoBloc(getCryptoPrices),
+        create: (_) => locator<CryptoBloc>(),
         child: const CryptoPricesScreen(),
       ),
     );
