@@ -13,14 +13,17 @@ class CryptoPriceList extends StatelessWidget {
     return Column(
       children: [
         const Padding(
-          padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          padding: EdgeInsets.all(16.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
                 child: Text(
                   'Symbol',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16.0,
+                  ),
                 ),
               ),
               Expanded(
@@ -28,7 +31,10 @@ class CryptoPriceList extends StatelessWidget {
                   alignment: Alignment.centerRight,
                   child: Text(
                     'Last',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16.0,
+                    ),
                   ),
                 ),
               ),
@@ -37,7 +43,10 @@ class CryptoPriceList extends StatelessWidget {
                   alignment: Alignment.centerRight,
                   child: Text(
                     'Chg',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16.0,
+                    ),
                   ),
                 ),
               ),
@@ -46,19 +55,29 @@ class CryptoPriceList extends StatelessWidget {
                   alignment: Alignment.centerRight,
                   child: Text(
                     'Chg%',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16.0,
+                    ),
                   ),
                 ),
               ),
             ],
           ),
         ),
-        const Divider(),
         Expanded(
           child: ListView.builder(
             itemCount: cryptoPrices.length,
             itemBuilder: (context, index) {
-              return CryptoPriceTile(cryptoPrice: cryptoPrices[index]);
+              return Card(
+                color: index % 2 == 0 ? Colors.white : Colors.grey[100],
+                elevation: 2.0,
+                margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: CryptoPriceTile(cryptoPrice: cryptoPrices[index]),
+                ),
+              );
             },
           ),
         ),
