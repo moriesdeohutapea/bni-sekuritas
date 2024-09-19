@@ -1,10 +1,10 @@
 class CryptoPriceModel {
-  final String symbol; // Ticker code (e.g., "ETH-USD", "BTC-USD")
-  final double lastPrice; // Last traded price of the cryptocurrency
-  final double? quantity; // Quantity of the trade (optional)
-  final double? dailyChangePercentage; // Daily change percentage (optional)
-  final double? dailyDifferencePrice; // Daily difference in price (optional)
-  final DateTime timestamp; // Timestamp of the trade in seconds
+  final String symbol;
+  final double lastPrice;
+  final double? quantity;
+  final double? dailyChangePercentage;
+  final double? dailyDifferencePrice;
+  final DateTime timestamp;
 
   CryptoPriceModel({
     required this.symbol,
@@ -15,7 +15,6 @@ class CryptoPriceModel {
     required this.timestamp,
   });
 
-  // Factory method to create a CryptoPriceModel from a JSON map
   factory CryptoPriceModel.fromJson(Map<String, dynamic> json) {
     return CryptoPriceModel(
       symbol: json['s'] as String,
@@ -27,7 +26,6 @@ class CryptoPriceModel {
     );
   }
 
-  // Method to convert CryptoPriceModel instance to JSON map
   Map<String, dynamic> toJson() {
     return {
       's': symbol,
@@ -39,7 +37,6 @@ class CryptoPriceModel {
     };
   }
 
-  // Overriding equality operator
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
@@ -53,7 +50,6 @@ class CryptoPriceModel {
         timestamp == otherModel.timestamp;
   }
 
-  // Overriding hashCode
   @override
   int get hashCode {
     return Object.hash(
