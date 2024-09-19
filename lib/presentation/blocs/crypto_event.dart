@@ -7,3 +7,11 @@ class SubscribeToCryptoPrices extends CryptoEvent {
 }
 
 class UnsubscribeFromCryptoPrices extends CryptoEvent {}
+
+class WebSocketErrorOccurred extends CryptoEvent {
+  final Object error;
+
+  WebSocketErrorOccurred(this.error);
+}
+
+class WebSocketConnectionClosed extends CryptoEvent {}

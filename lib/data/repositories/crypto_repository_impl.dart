@@ -21,7 +21,7 @@ class CryptoRepositoryImpl implements CryptoRepository {
         _latestPrices[symbol] = _createCryptoPriceFromEvent(symbol, event);
       }
     } catch (e) {
-      print('Error processing data in repository: $e');
+      throw Exception('Error processing data in repository: $e');
     }
     return _latestPrices.values.toList();
   }
@@ -45,12 +45,10 @@ class CryptoRepositoryImpl implements CryptoRepository {
       final parsedValue = double.tryParse(value);
       if (parsedValue != null) return parsedValue;
 
-      print('Failed to convert String to double: $value');
-      return null;
+      throw Exception('Failed to convert String to double: $value');
     }
 
-    print('Unhandled type for value conversion: $value (${value.runtimeType})');
-    return null;
+    throw Exception('Unhandled type for value conversion: $value (${value.runtimeType})');
   }
 
   @override

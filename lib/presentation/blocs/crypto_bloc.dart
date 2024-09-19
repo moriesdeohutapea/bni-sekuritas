@@ -10,8 +10,9 @@ class CryptoBloc extends Bloc<CryptoEvent, CryptoState> {
 
   CryptoBloc(this._getCryptoPrices) : super(CryptoInitial()) {
     on<SubscribeToCryptoPrices>(_onSubscribeToCryptoPrices);
-
     on<UnsubscribeFromCryptoPrices>(_onUnsubscribeFromCryptoPrices);
+    on<WebSocketErrorOccurred>(_onWebSocketErrorOccurred);
+    on<WebSocketConnectionClosed>(_onWebSocketConnectionClosed);
   }
 
   Future<void> _onSubscribeToCryptoPrices(SubscribeToCryptoPrices event, Emitter<CryptoState> emit) async {
@@ -33,8 +34,15 @@ class CryptoBloc extends Bloc<CryptoEvent, CryptoState> {
     emit(CryptoInitial());
   }
 
+  Future<void> _onWebSocketErrorOccurred(WebSocketErrorOccurred event, Emitter<CryptoState> emit) async {
+    emit(CryptoError('WebSocket error: ${event.error}'));
+  }
+
+  Future<void> _onWebSocketConnectionClosed(WebSocketConnectionClosed event, Emitter<CryptoState> emit) async {
+    emit(CryptoError('WebSocket connection closed'));
+  }
+
   CryptoState _handleError(Object error) {
-    // You could enhance error logging here if needed
     print('Error occurred: $error');
     return CryptoError('Failed to fetch data');
   }
